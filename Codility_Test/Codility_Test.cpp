@@ -423,6 +423,75 @@ int solution(vector<int>& A) {
 }
 
 
+//24-OCT-2021
+//Find strokes to color the vertical buildings, height of building is index data
+//Brush stroke is increased if no building connected of same height
+int solution(vector<int>& A) 
+{
+    auto vec = A;
+    double max = 0;
+    //find highest building
+    for (unsigned i = 0; i < vec.size(); ++i)
+    {
+        if (vec[i] > max)
+            max = vec[i];
+    }
+    int bc = 0;
+    for (unsigned iteration = 1; iteration <= max +1 ; ++iteration)
+    {
+        bool stroked = false;
+        NEWLINE
+        int nonzeroelem = 0;
+        for_each(vec.begin(), vec.end(), [&nonzeroelem](const auto& elem) {
+            if (nonzeroelem > 1) return;
+            if (elem > 0)
+                ++nonzeroelem;
+            });
+        if (nonzeroelem <= 1)
+        {
+	    //if 1000000000 is alone building height, cut it short
+            auto newlen = bc + (max - iteration+1);
+            return newlen;
+        }
+        for (unsigned i = 0; i < vec.size() ; ++i)
+        {
+            if (i == vec.size() - 1 )
+            {
+                if (!stroked && vec[i])
+                    ++bc;
+                if(vec[i] > 0 )
+                    --vec[i];
+                continue;
+            }
+            if (vec[i] == 0 && vec[i + 1] > 0){//0 - 1
+                stroked = false;
+                continue;
+            }
+            if (vec[i] > 0 && vec[i + 1] == 0) {//1 - 0
+                --vec[i];
+                if (!stroked)
+                    ++bc;
+                stroked = true;
+                continue;
+            }
+            if (vec[i] > 0 && vec[i + 1] > 0){//1 - 1
+                if(!stroked)
+                    ++bc;
+                stroked = true;
+                --vec[i];
+                continue;
+            }
+            if (vec[i] == 0 && vec[i + 1] == 0){ //0 - 0
+                stroked = false;
+                continue;
+            }
+        }
+        std::cout << " bc=" <<  bc << endl;
+    }
+    return bc;
+}
+
+
 int main()
 {
 	
