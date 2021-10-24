@@ -62,56 +62,56 @@ int solution1(vector<int> &A, vector<int> &B) {
 // a=13579 ; B=24680 => OUTPUT C=1234567890
 // a=135790011 ; B=246 => OUTPUT C=123456790011
 
-varint solution2(varint A, varint B)
+template<typename TV, typename TN>
+void extract_digits_in_order(vector<TV>& vint, TN num) 
 {
-	// write your code in C++14 (g++ 6.2.0)
-
-	vector<string> v;
-
-	std::string strA = std::to_string(A);
-	std::string strB = std::to_string(B);
-
-	//cout << "Translated string A= " << strA << endl;
-	//cout << "Translated string A= " << strB << endl;
-
-	int minlen = strA.length() > strB.length() ? strB.length() : strA.length();
-
-	int extA = 0;
-	int extB = 0;
-	if (strA.length() > strB.length())
-		extA = strA.length() - strB.length();
-	else
-		extB = strB.length() - strA.length();
-
-	
-	char tempZip[128] = "\0";
-	int counter = 0;
-	for (int i = 0; i < minlen; ++i)
-	{
-		tempZip[counter++] = strA.at(i);
-		tempZip[counter++] = strB.at(i);
-	}
-
-	string newStr = tempZip;
-
-	//cout << "newStr = " << tempZip << endl;
-
-	if (extA > 0)
-		newStr = newStr + strA.substr(minlen, extA);
-	else
-		newStr = newStr + strB.substr(minlen, extB);
-
-
-	cout << "New Str = " << newStr << endl;
-
-	stringstream s(newStr);
-	varint x = 0L;
-
-	s >> x;
-
-	return x;
+    stringstream ss;
+    ss << num;
+    int len = ss.str().length() - 1;
+    while (len)
+    {
+        TN divisor = pow(10, len);
+        vint.push_back(num / divisor);
+        num = num % divisor;
+        --len;
+        if (!len)
+            vint.push_back(num);
+    }
 }
 
+void main()
+{
+    vector<int> vInt, vInt2;;
+    unsigned  num2 = 98765432;
+    unsigned  num1 = 1111;
+    extract_digits_in_order(vInt, num1);
+    extract_digits_in_order(vInt2, num2);
+    int maxlen = vInt.size() > vInt2.size() ? vInt.size() : vInt2.size();
+    NEWLINE
+
+    for (int i = 0; i < maxlen; ++i)
+    {
+        if (i < vInt.size())
+            cout << vInt[i] << " ";
+        else
+        {
+            for_each(vInt2.begin()+i, vInt2.end(), [](const auto& elem) {
+                cout << elem << " ";
+                });
+            break;
+        }
+        if (i < vInt2.size())
+            cout << vInt2[i] << " ";
+        else
+        {
+            for_each(vInt.begin() + i, vInt.end(), [](const auto& elem) {
+                cout << elem << " ";
+                });
+            break;
+        }
+    }
+
+}
 //
 // LIVE PROBLEM TEST - 3
 // WRITE A MACHINE THAT PROCESS A STRING INPUT AND GET INTEGER OUTPUT
