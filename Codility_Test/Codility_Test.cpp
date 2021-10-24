@@ -62,12 +62,20 @@ int solution1(vector<int> &A, vector<int> &B) {
 // a=13579 ; B=24680 => OUTPUT C=1234567890
 // a=135790011 ; B=246 => OUTPUT C=123456790011
 
+#define NEWLINE std::cout<< endl;
+
 template<typename TV, typename TN>
-void extract_digits_in_order(vector<TV>& vint, TN num) 
+int extract_digits_in_order(vector<TV>& vint, TN num) 
 {
     stringstream ss;
     ss << num;
-    int len = ss.str().length() - 1;
+    if (ss.str().size() == 1)
+    {
+        vint.push_back(num);
+        return vint.size();
+    }
+
+    int len = ss.str().size() - 1;
     while (len)
     {
         TN divisor = pow(10, len);
@@ -75,27 +83,31 @@ void extract_digits_in_order(vector<TV>& vint, TN num)
         num = num % divisor;
         --len;
         if (!len)
+        {
             vint.push_back(num);
+        }
     }
+
+    return vint.size();
 }
 
 void main()
 {
-    vector<int> vInt, vInt2;;
-    unsigned  num2 = 98765432;
-    unsigned  num1 = 1111;
-    extract_digits_in_order(vInt, num1);
-    extract_digits_in_order(vInt2, num2);
-    int maxlen = vInt.size() > vInt2.size() ? vInt.size() : vInt2.size();
-    NEWLINE
+    vector<int> vInt1, vInt2;;
+    unsigned  num1 = 13579;
+    unsigned  num2 = 2;
 
-    for (int i = 0; i < maxlen; ++i)
+    int d1 = extract_digits_in_order(vInt1, num1);
+    int d2 = extract_digits_in_order(vInt2, num2);
+    unsigned maxlen = d1 > d2 ? d1 : d2;
+    NEWLINE
+    for (unsigned i = 0; i < maxlen; ++i)
     {
-        if (i < vInt.size())
-            cout << vInt[i] << " ";
+        if (i < vInt1.size())
+            cout << vInt1[i] << " ";
         else
         {
-            for_each(vInt2.begin()+i, vInt2.end(), [](const auto& elem) {
+            for_each(vInt2.begin() + i, vInt2.end(), [](const auto& elem) {
                 cout << elem << " ";
                 });
             break;
@@ -104,14 +116,17 @@ void main()
             cout << vInt2[i] << " ";
         else
         {
-            for_each(vInt.begin() + i, vInt.end(), [](const auto& elem) {
+            for_each(vInt1.begin() + i, vInt1.end(), [](const auto& elem) {
                 cout << elem << " ";
                 });
             break;
         }
     }
 
+    return 0;
 }
+
+
 //
 // LIVE PROBLEM TEST - 3
 // WRITE A MACHINE THAT PROCESS A STRING INPUT AND GET INTEGER OUTPUT
