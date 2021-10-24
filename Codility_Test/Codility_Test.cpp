@@ -376,6 +376,51 @@ INT64 solution5(vINT64 &vInput)
 
 	return hi + 1;
 }
+100% result
+
+
+//Write a function :
+//int solution(int A[], int N);
+//that, given an array A of N integers, returns the smallest positive integer(greater than 0) that does not occur in A.
+//For example, given A = [1, 3, 6, 4, 1, 2], the function should return 5.
+//Given A = [1, 2, 3], the function should return 4.
+//Given A = [−1, −3], the function should return 1.
+//Write an efficient algorithm for the following assumptions :
+//N is an integer within the range[1..100, 000];
+//each element of array A is an integer within the range[−1, 000, 000..1, 000, 000].
+#include <algorithm>
+using namespace std;
+int solution(vector<int>& A) {
+    // write your code in C++14 (g++ 6.2.0)
+    //1 - make local copy
+    vector<int> vInt2 = A;
+    //2 - sort input
+    sort(vInt2.begin(), vInt2.end());
+    //3 - get only positive values negative and 0 excluded
+    vector <int> trunc;
+    trunc.push_back(0);
+    for_each(vInt2.begin(), vInt2.end(), [&trunc](const auto& elem) {
+        if (elem > 0)
+        {
+            trunc.push_back(elem);
+        }
+        
+    });
+    
+    //5- decision if all zero values hence trunc is empty return 1
+    if (trunc.empty())
+        return 1;
+
+    //6-start comparing from 0 to highest number in truncated vector
+    for (int i = 0; i < trunc[trunc.size()-1]; ++i)
+    {
+        if (i != trunc[i])
+            return i;
+    }
+
+    //7-if all numbers are present, then the next number to the highest is answer
+    return  trunc[trunc.size() - 1] + 1;
+}
 
 
 int main()
