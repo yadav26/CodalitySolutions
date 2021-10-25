@@ -426,70 +426,123 @@ int solution(vector<int>& A) {
 //24-OCT-2021
 //Find strokes to color the vertical buildings, height of building is index data
 //Brush stroke is increased if no building connected of same height
-int solution(vector<int>& A) 
+
+//Find brush stroke for current vector row is 0
+//increase bc when a non zero height, 
+//if zero height reset strok flag
+int FindBrushStrokeCount(const vector<int>& A)
 {
     auto vec = A;
-    double max = 0;
-    //find highest building
-    for (unsigned i = 0; i < vec.size(); ++i)
+    unsigned bc = 0;
+    bool stroked = false;
+    for (auto i = 0; i < vec.size(); ++i)
     {
-        if (vec[i] > max)
-            max = vec[i];
-    }
-    int bc = 0;
-    for (unsigned iteration = 1; iteration <= max +1 ; ++iteration)
-    {
-        bool stroked = false;
-        NEWLINE
-        int nonzeroelem = 0;
-        for_each(vec.begin(), vec.end(), [&nonzeroelem](const auto& elem) {
-            if (nonzeroelem > 1) return;
-            if (elem > 0)
-                ++nonzeroelem;
-            });
-        if (nonzeroelem <= 1)
-        {
-	    //if 1000000000 is alone building height, cut it short
-            auto newlen = bc + (max - iteration+1);
-            return newlen;
+        if (i == vec.size() - 1)
+        {//last index
+            if (!stroked && vec[i] > 0 )
+                ++bc;
+            continue;
         }
-        for (unsigned i = 0; i < vec.size() ; ++i)
-        {
-            if (i == vec.size() - 1 )
-            {
-                if (!stroked && vec[i])
-                    ++bc;
-                if(vec[i] > 0 )
-                    --vec[i];
-                continue;
-            }
-            if (vec[i] == 0 && vec[i + 1] > 0){//0 - 1
-                stroked = false;
-                continue;
-            }
-            if (vec[i] > 0 && vec[i + 1] == 0) {//1 - 0
-                --vec[i];
-                if (!stroked)
-                    ++bc;
-                stroked = true;
-                continue;
-            }
-            if (vec[i] > 0 && vec[i + 1] > 0){//1 - 1
-                if(!stroked)
-                    ++bc;
-                stroked = true;
-                --vec[i];
-                continue;
-            }
-            if (vec[i] == 0 && vec[i + 1] == 0){ //0 - 0
-                stroked = false;
-                continue;
-            }
+        if (vec[i] == 0 && vec[i + 1] == 0)
+        {//current is 0 ->0 => from empty to empty
+            stroked = false;
+            continue;
         }
-        std::cout << " bc=" <<  bc << endl;
+        if (vec[i] == 0 && vec[i + 1] > 0)
+        {//current is 0 -> 1 => from empty to height
+            stroked = false;
+            continue;
+        }
+        if (vec[i] > 0 && vec[i + 1] == 0)
+        {//current is 1 -> 0 => from height to empty
+            if (!stroked)
+                ++bc;
+
+            stroked = false;
+            continue;
+        }
+        if (vec[i] > 0 && vec[i + 1] > 0)
+        {//current is 1 -> 1 => consequtive height
+            if (!stroked)
+                ++bc;
+
+            stroked = true;
+            continue;
+        }
     }
+
     return bc;
 }
+void squeeze(vector<int>& v)
+{
+    vector<int> tmpv;
+    for (auto i = 0; i < v.size(); ++i)
+    {
+        if (i == v.size() - 1)
+        {
+            tmpv.push_back(v[i]);
+            continue;
+        }
+        if (v[i] == 0 && v[i + 1] == 0)
+        {
+            continue;
+        }
+        tmpv.push_back(v[i]);
+    }
+    v = tmpv;
+}
+
+int solution(const vector<int>& A)
+{
+    auto vec = A;
+    auto max_iterations = *max_element(vec.begin(), vec.end());
+
+    set<int> s(vec.begin(), vec.end());
+    vector<int> sortv(s.begin(), s.end());//duplicates removed ordered sort inc
+    
+    int sortindex = 0;
+    int bc = 0;
+    for (auto it = 0; it< max_iterations; )
+    {
+        int localbc = 0;
+        auto currheight = it;
+        auto newheight = sortv[sortindex++];
+        auto deltaheight = newheight - currheight;
+
+        //cout << endl;
+        //cout << endl;
+        //for_each(vec.begin(), vec.end(), [](auto& ele) {
+        //    cout << " " << ele;
+        //    });
+        //cout << endl;
+
+        localbc = FindBrushStrokeCount(vec);
+        //cout << "  =====>localbc = " << localbc << endl;
+        int totalnonzero = 0;
+        for_each(vec.begin(), vec.end(), [&deltaheight, &totalnonzero](auto& ele) {
+            if (ele > 0)
+            {
+                ++totalnonzero;
+                ele = ele - deltaheight;
+            }
+            });
+
+        //for_each(vec.begin(), vec.end(), [](auto& ele) {
+        //    cout << " " << ele;
+        //    });
+        //cout << endl;
+        squeeze(vec);
+        //for_each(vec.begin(), vec.end(), [](auto& ele) {
+        //    cout << " " << ele;
+        //    });
+        bc += (deltaheight * localbc);
+        it = newheight;
+    }
+
+
+    return bc;
+}
+
 
 
 int main()
