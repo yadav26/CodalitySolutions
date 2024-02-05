@@ -1,0 +1,5 @@
+Create a recursive brute force solution. This will generate a big tree with On*n 
+Then save the nodes which are already calculated in a memory indexed based on input params .e.g. 
+len of array, then dp[len],
+if two arrays to compare then 2D dp[len1][len2],
+donot calculate the state if already calculated and return the result.
