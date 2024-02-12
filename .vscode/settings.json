@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "*.php": "php",
+        "*.json": "cpp",
+        "iostream": "cpp",
+        "vector": "cpp"
+    }
+}
